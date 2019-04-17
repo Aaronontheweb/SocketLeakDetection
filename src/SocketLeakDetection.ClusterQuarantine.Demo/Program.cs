@@ -87,7 +87,8 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
             var pbm = PetabridgeCmd.Get(seed);
             pbm.RegisterCommandPalette(ClusterCommands.Instance);
             pbm.Start();
-            var leakDetector = seed.ActorOf(Props.Create(() => new TcpPortUseSupervisor(new[]{ IPAddress.Loopback })), "portMonitor");
+            var settings = new SocketLeakDetectorSettings(maxPorts:20000);
+            var leakDetector = seed.ActorOf(Props.Create(() => new TcpPortUseSupervisor(settings, new[]{ IPAddress.Loopback })), "portMonitor");
 
             // start node that will be quarantined
             var quarantineNode = StartNode(9555);
