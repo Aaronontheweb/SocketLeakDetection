@@ -106,17 +106,17 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
             }
             seed.Log.Info("Cluster up.");
 
-            Console.WriteLine("Press enter to begin quarantine.");
-            Console.ReadLine();
+            //Console.WriteLine("Press enter to begin quarantine.");
+            //Console.ReadLine();
             RarpFor(seed).Quarantine(node2Addr, uid);
 
             await Task.Delay(TimeSpan.FromSeconds(2.5));
             seed.ActorSelection(new RootActorPath(node2Addr) / "user" / "silence").Tell("fuber");
 
 
-            Console.WriteLine("Press enter to terminate quarantined node");
-            Console.ReadLine();
-            await quarantineNode.Terminate();
+            //Console.WriteLine("Press enter to terminate quarantined node");
+            //Console.ReadLine();
+            //await quarantineNode.Terminate();
 
             seed.WhenTerminated.Wait();
         }
