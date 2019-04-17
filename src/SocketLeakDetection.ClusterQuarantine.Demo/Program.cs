@@ -109,6 +109,10 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
             Console.ReadLine();
             RarpFor(seed).Quarantine(node2Addr, uid);
 
+            await Task.Delay(TimeSpan.FromSeconds(2.5));
+            seed.ActorSelection(new RootActorPath(node2Addr) / "user" / "silence").Tell("fuber");
+
+
             Console.WriteLine("Press enter to terminate quarantined node");
             Console.ReadLine();
             await quarantineNode.Terminate();
