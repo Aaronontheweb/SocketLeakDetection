@@ -56,6 +56,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
                 akka.actor.provider = cluster
                 akka.remote.dot-netty.tcp.port = """+ portNumber + @"""
                 akka.remote.dot-netty.tcp.hostname = 127.0.0.1
+                akka.remote.dot-netty.tcp.applied-adapters = [""gremlin""] # enables packet loss control
                 akka.actor.deployment{
                     /random {
 			            router = random-group
@@ -66,7 +67,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
 			            }
 		            }
                 }
-                akka.cluster.seed-nodes = [""akka.tcp://quarantine-test@127.0.0.1:9444""]
+                akka.cluster.seed-nodes = [""akka.gremlin.tcp://quarantine-test@127.0.0.1:9444""]
             ";
         }
 
