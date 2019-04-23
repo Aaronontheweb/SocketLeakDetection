@@ -7,6 +7,7 @@ using Akka.Cluster;
 using Akka.Configuration;
 using Akka.Event;
 using Akka.Remote;
+using Akka.Remote.Transport;
 using Akka.Routing;
 using Akka.Util.Internal;
 using Petabridge.Cmd.Cluster;
@@ -56,7 +57,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
                 akka.actor.provider = cluster
                 akka.remote.dot-netty.tcp.port = """+ portNumber + @"""
                 akka.remote.dot-netty.tcp.hostname = 127.0.0.1
-                akka.remote.dot-netty.tcp.applied-adapters = [""gremlin""] # enables packet loss control
+                akka.remote.dot-netty.tcp.applied-adapters = [""trttl""] # enables packet loss control
                 akka.actor.deployment{
                     /random {
 			            router = random-group
@@ -67,7 +68,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
 			            }
 		            }
                 }
-                akka.cluster.seed-nodes = [""akka.gremlin.tcp://quarantine-test@127.0.0.1:9444""]
+                akka.cluster.seed-nodes = [""akka.trttl.tcp://quarantine-test@127.0.0.1:9444""]
             ";
         }
 
@@ -109,6 +110,10 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
 
             //Console.WriteLine("Press enter to begin quarantine.");
             //Console.ReadLine();
+
+            // blackhole
+            await RarpFor(seed).Transport.ManagementCommand(new SetThrottle(node2Addr,
+                ThrottleTransportAdapter.Direction.Both, Blackhole.Instance));
             RarpFor(seed).Quarantine(node2Addr, uid);
 
             await Task.Delay(TimeSpan.FromSeconds(2.5));
