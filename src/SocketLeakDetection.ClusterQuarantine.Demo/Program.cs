@@ -108,9 +108,10 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
         {
             return @"
                 akka.actor.provider = cluster
-                akka.remote.dot-netty.tcp.port = """+ portNumber + @"""
-                akka.remote.dot-netty.tcp.hostname = 127.0.0.1
-                akka.remote.dot-netty.tcp.applied-adapters = [""trttl""] # enables packet loss control
+                akka.remote.enabled-transports = [""akka.remote.helios.tcp""]
+                akka.remote.helios.tcp.port = """+ portNumber + @"""
+                akka.remote.helios.tcp.hostname = 127.0.0.1
+                akka.remote.helios.tcp.applied-adapters = [""trttl""] # enables packet loss control
                 
                 akka.actor.deployment{
                     /random {
