@@ -26,6 +26,32 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
         }
     }
 
+    public class AssociationProfiler : ReceiveActor
+    {
+        private readonly ILoggingAdapter _log = Context.GetLogger();
+
+        public AssociationProfiler()
+        {
+            Receive<AssociatedEvent>(q =>
+            {
+                // add entry to table - log it
+                
+            });
+
+            Receive<DisassociatedEvent>(q =>
+            {
+                // remove matching entry from table - log it
+            });
+        }
+
+
+        protected override void PreStart()
+        {
+            Context.System.EventStream.Subscribe(Self, typeof(AssociatedEvent));
+            Context.System.EventStream.Subscribe(Self, typeof(DisassociatedEvent));
+        }
+    }
+
     public class QuarantineDetector : ReceiveActor
     {
         private readonly ILoggingAdapter _log = Context.GetLogger();
@@ -58,6 +84,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
                 akka.remote.dot-netty.tcp.port = """+ portNumber + @"""
                 akka.remote.dot-netty.tcp.hostname = 127.0.0.1
                 akka.remote.dot-netty.tcp.applied-adapters = [""trttl""] # enables packet loss control
+                
                 akka.actor.deployment{
                     /random {
 			            router = random-group
@@ -68,6 +95,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
 			            }
 		            }
                 }
+
                 akka.cluster.seed-nodes = [""akka.trttl.tcp://quarantine-test@127.0.0.1:9444""]
             ";
         }
@@ -114,6 +142,7 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
             // blackhole
             await RarpFor(seed).Transport.ManagementCommand(new SetThrottle(node2Addr,
                 ThrottleTransportAdapter.Direction.Both, Blackhole.Instance));
+
             RarpFor(seed).Quarantine(node2Addr, uid);
 
             await Task.Delay(TimeSpan.FromSeconds(2.5));
