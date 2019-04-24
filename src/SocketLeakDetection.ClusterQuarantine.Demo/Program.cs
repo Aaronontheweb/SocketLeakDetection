@@ -176,6 +176,8 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
             await Task.Delay(TimeSpan.FromSeconds(2.5));
             seed.ActorSelection(new RootActorPath(node2Addr) / "user" / "silence").Tell("fuber");
 
+            await RarpFor(seed).Transport.ManagementCommand(new SetThrottle(node2Addr,
+                ThrottleTransportAdapter.Direction.Both, Unthrottled.Instance));
 
             //Console.WriteLine("Press enter to terminate quarantined node");
             //Console.ReadLine();
