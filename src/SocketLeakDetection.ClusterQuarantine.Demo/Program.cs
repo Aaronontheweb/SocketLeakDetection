@@ -107,6 +107,8 @@ namespace SocketLeakDetection.ClusterQuarantine.Demo
         private static Config ClusterConfig(int portNumber)
         {
             return @"
+                akka.loglevel = DEBUG
+                akka.cluster.log-info = off
                 akka.actor.provider = cluster
                 akka.remote.dot-netty.tcp.port = """+ portNumber + @"""
                 akka.remote.dot-netty.tcp.hostname = 127.0.0.1
